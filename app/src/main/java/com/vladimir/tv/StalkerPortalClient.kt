@@ -125,15 +125,15 @@ internal class StalkerPortalClient(
             connection.setRequestProperty("X-User-Agent", "Model: MAG250; Link: WiFi")
             connection.setRequestProperty("Cookie", cookie)
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
-            val body = Uri.Builder().appendQueryParameter("mac", mac).appendQueryParameter("login", login)
+            val requestBody = Uri.Builder().appendQueryParameter("mac", mac).appendQueryParameter("login", login)
                 .appendQueryParameter("password", password).build().encodedQuery
-            connection.outputStream.bufferedWriter(Charsets.UTF_8).use { it.write(body) }
+            connection.outputStream.bufferedWriter(Charsets.UTF_8).use { it.write(requestBody) }
             val code = connection.responseCode
-            val body = (if (code in 200..299) connection.inputStream else connection.errorStream)
+            val responseBody = (if (code in 200..299) connection.inputStream else connection.errorStream)
                 ?.bufferedReader()?.use { it.readText() }.orEmpty()
             check(code in 200..299) { "Login authorization HTTP $code" }
-            check(!body.contains("invalid login", true) && !body.contains("wrong password", true) &&
-                !body.contains("unauthorized", true)) { "Portal rejected the login or password" }
+            check(!responseBody.contains("invalid login", true) && !responseBody.contains("wrong password", true) &&
+                !responseBody.contains("unauthorized", true)) { "Portal rejected the login or password" }
         } finally {
             connection.disconnect()
         }

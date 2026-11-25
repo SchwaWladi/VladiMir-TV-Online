@@ -929,7 +929,7 @@ class MainActivity : Activity() {
         var lastSample = android.os.SystemClock.elapsedRealtime()
         fun receivedBytes(): Long {
             val appBytes = android.net.TrafficStats.getUidRxBytes(uid)
-            return if (appBytes != android.net.TrafficStats.UNSUPPORTED) appBytes
+            return if (appBytes != android.net.TrafficStats.UNSUPPORTED.toLong()) appBytes
             else android.net.TrafficStats.getTotalRxBytes()
         }
         var lastBytes = receivedBytes()
